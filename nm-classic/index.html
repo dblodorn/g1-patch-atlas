@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NM Classic Index</title>
+<meta name="description" content="A searchable index of the Nord Modular Classic Archive at electro-music.org, created by Wout Blommers. Every file links to its home on electro-music.org.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: same sigil-x-native sheet as the atlas. Credits panel first, then a browser: breadcrumb, folders, files. */
+@font-face { font-family: "PDU Local"; src: local("PDU"), local("PDU Regular"), local("PDU-Regular"); }
+:root {
+  --paper: #ffffff;
+  --panel: #f1f1ed;
+  --ink: #1b1817;
+  --ink-muted: rgba(27, 24, 23, .6);
+  --rule: #d8d8d8;
+  --link: #4a60b2;
+  --mark: #bf352c;
+  --f-display: "PDU Local", "Space Mono", ui-monospace, Menlo, monospace;
+  --f-mono: "Space Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --paper: #1b1817; --panel: #262221; --ink: #e4e5df; --ink-muted: rgba(228, 229, 223, .6); --rule: #3a3533; --link: #8fa0e6; --mark: #e0574d; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 13px/1.6 var(--f-mono); }
+.wrap {
+  max-width: 1120px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 56px;
+  display: grid; gap: 40px;
+}
+a { color: inherit; }
+a:hover { color: var(--link); }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 1px solid var(--ink); outline-offset: 3px; }
+.muted { color: var(--ink-muted); }
+.label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-muted); }
+
+.top { display: grid; gap: 10px; }
+.crumb { margin: 0; font: 400 clamp(18px, 2.6vw, 26px)/1.15 var(--f-display); text-transform: uppercase; letter-spacing: .02em; text-wrap: balance; }
+.crumb a { text-decoration: none; }
+.crumb a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+.credits { background: var(--panel); padding: 24px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px 40px; }
+.credits h2 { grid-column: 1 / -1; margin: 0; font: 400 12px/1.4 var(--f-mono); letter-spacing: .12em; text-transform: uppercase; }
+.credits p { margin: 0; max-width: 62ch; }
+.credits .big { font-size: 15px; line-height: 1.55; }
+.credits a { color: var(--link); }
+@media (max-width: 760px) { .credits { grid-template-columns: minmax(0, 1fr); } }
+
+.controls { display: flex; flex-wrap: wrap; align-items: end; gap: 16px 32px; }
+.field { display: grid; gap: 4px; flex: 1 1 280px; max-width: 420px; }
+.search { width: 100%; font: 400 13px/1.4 var(--f-mono); color: var(--ink); background: transparent; border: 0; border-bottom: 1px solid var(--ink); border-radius: 0; padding: 6px 0; }
+.search::placeholder { color: var(--ink-muted); }
+.toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer; }
+.toggle input { accent-color: var(--ink); }
+.stats { font-size: 11px; color: var(--ink-muted); letter-spacing: .04em; font-variant-numeric: tabular-nums; }
+
+.path { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: baseline; padding-bottom: 10px; border-bottom: 1px solid var(--ink); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+.path button { font: inherit; letter-spacing: inherit; text-transform: inherit; color: var(--ink-muted); background: none; border: 0; padding: 0; cursor: pointer; }
+.path button:hover { color: var(--ink); }
+.path .here { color: var(--ink); }
+.path .sep { color: var(--ink-muted); }
+.path .open { margin-left: auto; text-transform: none; letter-spacing: 0; font-size: 11px; }
+
+.list { list-style: none; margin: 0; padding: 0; }
+.item { display: grid; grid-template-columns: minmax(0, 1fr) 5rem 9.5rem; gap: 4px 24px; padding: 9px 0; border-bottom: 1px solid var(--rule); align-items: baseline; }
+.item .name { min-width: 0; overflow-wrap: anywhere; }
+.item .name a, .item .name button { text-decoration: none; }
+.item .dir { display: block; font-size: 11px; color: var(--ink-muted); overflow-wrap: anywhere; }
+.item .dir button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
+.item .dir button:hover { color: var(--ink); }
+.item .num { font-size: 11px; color: var(--ink-muted); font-variant-numeric: tabular-nums; text-align: right; }
+.folder button { font: 700 13px/1.5 var(--f-mono); color: var(--ink); background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
+.folder button::before { content: "▸ "; color: var(--mark); }
+.folder button:hover { color: var(--link); }
+.ext { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-muted); margin-left: 8px; }
+@media (max-width: 640px) {
+  .item { grid-template-columns: minmax(0, 1fr) auto; }
+  .item .date { display: none; }
+}
+.more { padding: 16px 0; color: var(--ink-muted); font-size: 12px; }
+.empty { padding: 32px 0; color: var(--ink-muted); border-bottom: 1px solid var(--rule); }
+
+footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 32px; font-size: 11px; color: var(--ink-muted); }
+footer p { margin: 0; max-width: 70ch; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1 class="crumb"><a href="/">Nord Modular / G1 Patch Atlas</a> / NM Classic Index</h1>
+    <p class="muted" style="margin:0;max-width:64ch">A searchable map of the Nord Modular Classic Archive. This page only lists the archive's contents. Every file and folder links to its home on electro-music.org.</p>
+  </header>
+
+  <section class="credits" aria-labelledby="credits-h">
+    <h2 id="credits-h">Credits</h2>
+    <p class="big">The <a href="https://electro-music.org/nm_classic/" target="_blank" rel="noopener">Nord Modular Classic Archive</a> was created by <strong>Wout Blommers</strong> and is hosted by the <a href="https://electro-music.org/" target="_blank" rel="noopener">electro-music.com</a> community. Its decades of collected patches, threads and workshops are their work. Please visit, browse and download there.</p>
+    <div style="display:grid;gap:12px">
+      <p>Content is copyright Clavia DMI and the members of the Nord Modular mailing lists, as the archive itself states. Each patch belongs to the person who made it.</p>
+      <p>The archive offers <a href="https://electro-music.org/nm_classic/archive.zip" target="_blank" rel="noopener">a zip of the whole archive</a>. Roland Kuit's patches are left out of it at his request, so contact him directly for those.</p>
+      <p class="muted">Nothing is copied or hosted here. Downloads go straight to electro-music.org.</p>
+    </div>
+  </section>
+
+  <div class="controls">
+    <div class="field">
+      <label for="q" class="label">Search file and folder names</label>
+      <input id="q" class="search" type="search" placeholder="vocoder, bass, Punter, Lead2Card…" autocomplete="off">
+    </div>
+    <label class="toggle" for="patches-only"><input id="patches-only" type="checkbox" checked> Patches only (.pch, .pchList)</label>
+    <span class="stats" id="stats">Loading index…</span>
+  </div>
+
+  <main>
+    <nav class="path" id="path" aria-label="Folder path"></nav>
+    <ul class="list" id="list"></ul>
+    <div class="more" id="more" hidden></div>
+  </main>
+
+  <footer>
+    <p id="indexed">Indexed from the archive's own directory listings.</p>
+    <p><a href="/">Back to the G1 Patch Atlas</a></p>
+  </footer>
+</div>
+
+<script>
+const SOURCE = "https://electro-music.org/nm_classic/";
+const NAMES = {
+  "011_1_patches": "Mailing List Patches",
+  "011_2_CategoriesArchive": "Categories Archive",
+  "011_3_CategoriesArchive_Smith_Tony": "Categories Archive — Tony Smith",
+  "011_4_Sound_Subscribers": "Sound Subscribers",
+  "011_5_FM_for_Xmas": "FM for Xmas",
+  "011_6_Nord_Lead_Emulation_by_Clavia": "Nord Lead emulation — Clavia",
+  "011_7_NordLead_Emulation_by_Martinez_Ken": "Nord Lead emulation — Ken Martinez",
+  "011_8_Random_Patches": "Random Patches",
+  "011_9_Factory_Presets": "Factory Presets",
+  "014_threads": "Interesting Threads",
+  "015_workshops": "Workshops",
+  "016_Koorenhuis_Cursus": "Koorenhuis course",
+  "017_FAQ": "FAQ",
+};
+const PATCH = /\.(pch|pchlist)$/i;
+const PAGE = 400;
+const $ = s => document.querySelector(s);
+let FILES = [], DIRS = new Set(), cwd = "", shown = PAGE;
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const enc = p => SOURCE + p.split("/").map(encodeURIComponent).join("/");
+const label = seg => NAMES[seg] || seg.replace(/_/g, " ");
+const ext = n => (n.match(/\.([a-z0-9]+)$/i) || [, ""])[1];
+
+function fromHash() {
+  const h = decodeURIComponent(location.hash.replace(/^#\/?/, ""));
+  cwd = h && DIRS.has(h.endsWith("/") ? h : h + "/") ? (h.endsWith("/") ? h : h + "/") : "";
+}
+function go(dir) { cwd = dir; shown = PAGE; history.replaceState(null, "", dir ? "#/" + encodeURIComponent(dir) : location.pathname); render(); window.scrollTo({ top: $("#path").offsetTop - 16 }); }
+
+function crumbs(q) {
+  const parts = cwd.split("/").filter(Boolean);
+  let acc = "", html = `<button data-dir="">Archive</button>`;
+  parts.forEach((p, i) => {
+    acc += p + "/";
+    html += `<span class="sep">/</span>` + (i === parts.length - 1 ? `<span class="here">${esc(label(p))}</span>` : `<button data-dir="${esc(acc)}">${esc(label(p))}</button>`);
+  });
+  if (q) html += `<span class="sep">/</span><span class="here">Search: ${esc(q)}</span>`;
+  html += `<a class="open" href="${esc(enc(cwd))}" target="_blank" rel="noopener">Open on electro-music ↗</a>`;
+  $("#path").innerHTML = html;
+}
+
+function fileRow(f, withDir) {
+  const p = f.dir + f.name;
+  return `<li class="item"><span class="name"><a href="${esc(enc(p))}" target="_blank" rel="noopener">${esc(f.name)}</a>` +
+    (withDir ? `<span class="dir"><button data-dir="${esc(f.dir)}">${esc(f.dir || "/")}</button></span>` : "") +
+    `</span><span class="num">${esc(f.size)}</span><span class="num date">${esc(f.modified.slice(0, 10))}</span></li>`;
+}
+
+function render() {
+  const q = $("#q").value.trim().toLowerCase();
+  const onlyPatches = $("#patches-only").checked;
+  const keep = f => !onlyPatches || PATCH.test(f.name);
+  crumbs(q);
+  let rows = [], total = 0;
+  if (q) {
+    const hits = FILES.filter(f => f.dir.startsWith(cwd) && keep(f) && (f.dir + f.name).toLowerCase().includes(q));
+    total = hits.length;
+    rows = hits.slice(0, shown).map(f => fileRow(f, true));
+  } else {
+    const subs = new Map();
+    for (const d of DIRS) {
+      if (d !== cwd && d.startsWith(cwd)) {
+        const child = cwd + d.slice(cwd.length).split("/")[0] + "/";
+        subs.set(child, 0);
+      }
+    }
+    for (const f of FILES) if (keep(f)) for (const c of subs.keys()) if (f.dir.startsWith(c)) { subs.set(c, subs.get(c) + 1); break; }
+    const folders = [...subs].sort((a, b) => a[0].localeCompare(b[0])).map(([d, n]) =>
+      `<li class="item folder"><span class="name"><button data-dir="${esc(d)}">${esc(label(d.slice(cwd.length, -1)))}</button></span><span class="num">${n.toLocaleString()}</span><span class="num date">${onlyPatches ? "patches" : "files"}</span></li>`);
+    const here = FILES.filter(f => f.dir === cwd && keep(f));
+    total = folders.length + here.length;
+    rows = folders.concat(here.slice(0, shown).map(f => fileRow(f, false)));
+  }
+  $("#list").innerHTML = rows.join("") || `<li class="empty">${q ? `Nothing matches “${esc(q)}” here. Try the whole archive or clear the search.` : "This folder has no matching files."}</li>`;
+  const more = $("#more");
+  more.hidden = rows.length >= total;
+  if (!more.hidden) more.innerHTML = `Showing ${rows.length.toLocaleString()} of ${total.toLocaleString()}. <button id="show-more" style="font:inherit;color:var(--ink);background:none;border:0;border-bottom:1px solid var(--ink);padding:0;cursor:pointer">Show more</button>`;
+}
+
+document.addEventListener("click", e => {
+  const b = e.target.closest("button[data-dir]");
+  if (b) { if ($("#q").value) $("#q").value = ""; go(b.dataset.dir); return; }
+  if (e.target.id === "show-more") { shown += PAGE; render(); }
+});
+$("#q").addEventListener("input", () => { shown = PAGE; render(); });
+$("#patches-only").addEventListener("change", () => { shown = PAGE; render(); });
+window.addEventListener("hashchange", () => { fromHash(); render(); });
+
+fetch("index.json").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
+  FILES = d.files.map(([i, name, modified, size]) => ({ dir: d.dirs[i], name, modified, size }));
+  for (const f of FILES) { let acc = ""; for (const p of f.dir.split("/").filter(Boolean)) { acc += p + "/"; DIRS.add(acc); } }
+  const patches = FILES.filter(f => PATCH.test(f.name)).length;
+  $("#stats").textContent = `${patches.toLocaleString()} patches · ${FILES.length.toLocaleString()} files · ${DIRS.size.toLocaleString()} folders`;
+  $("#indexed").textContent = `Indexed ${d.indexed} from the archive's own directory listings: names, sizes and dates only.`;
+  fromHash(); render();
+}).catch(() => {
+  $("#stats").textContent = "";
+  $("#list").innerHTML = `<li class="empty">The index didn't load. Reload the page, or browse the archive directly at <a href="${SOURCE}">electro-music.org/nm_classic</a>.</li>`;
+});
+</script>
+</body>
+</html>
