@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>G1 Patch Atlas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Where to find Nord Modular G1 and Micro Modular patches, editors, format docs and reading.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: sigil-x-native sketch sheet. Plain paper, one mono face, display caps for headings, hairline rows, a cool-paper panel for notes. */
+@font-face { font-family: "PDU Local"; src: local("PDU"), local("PDU Regular"), local("PDU-Regular"); }
+:root {
+  --paper: #ffffff;
+  --panel: #f1f1ed;
+  --ink: #1b1817;
+  --ink-muted: rgba(27, 24, 23, .6);
+  --rule: #d8d8d8;
+  --link: #4a60b2;
+
+  /* category marks, from the Concrete Poetry swatches */
+  --m-archives: #bf352c;
+  --m-factory: #658f56;
+  --m-editors: #1336c5;
+  --m-format: #db8040;
+  --m-reading: #cc7268;
+  --m-commercial: #4a4240;
+
+  --ok: #658f56;
+  --warn: #db8040;
+  --bad: #cb0705;
+
+  --f-display: "PDU Local", "Space Mono", ui-monospace, Menlo, monospace;
+  --f-mono: "Space Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1b1817; --panel: #262221; --ink: #e4e5df; --ink-muted: rgba(228, 229, 223, .6);
+    --rule: #3a3533; --link: #8fa0e6;
+    --m-archives: #e0574d; --m-factory: #86b376; --m-editors: #7f97ff; --m-format: #eaa06a; --m-reading: #e39a91; --m-commercial: #a59a96;
+    --ok: #86b376; --warn: #eaa06a; --bad: #ff6a5c;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1b1817; --panel: #262221; --ink: #e4e5df; --ink-muted: rgba(228, 229, 223, .6);
+  --rule: #3a3533; --link: #8fa0e6;
+  --m-archives: #e0574d; --m-factory: #86b376; --m-editors: #7f97ff; --m-format: #eaa06a; --m-reading: #e39a91; --m-commercial: #a59a96;
+  --ok: #86b376; --warn: #eaa06a; --bad: #ff6a5c;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font: 400 13px/1.6 var(--f-mono); }
+.wrap {
+  max-width: 1120px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 56px;
+  display: grid; gap: 56px;
+}
+a { color: inherit; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 1px solid var(--ink); outline-offset: 3px; }
+
+.crumb {
+  margin: 0; font: 400 clamp(18px, 2.6vw, 26px)/1.15 var(--f-display);
+  text-transform: uppercase; letter-spacing: .02em; text-wrap: balance;
+}
+.muted { color: var(--ink-muted); }
+
+.intro { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px 48px; }
+.intro p { margin: 0; max-width: 60ch; }
+@media (max-width: 720px) { .intro { grid-template-columns: minmax(0, 1fr); } }
+
+.controls { display: grid; gap: 14px; }
+.search {
+  width: 100%; max-width: 420px; font: 400 13px/1.4 var(--f-mono); color: var(--ink);
+  background: transparent; border: 0; border-bottom: 1px solid var(--ink); border-radius: 0; padding: 6px 0;
+}
+.search::placeholder { color: var(--ink-muted); }
+.filters { display: flex; flex-wrap: wrap; gap: 6px 20px; }
+.filter {
+  font: 400 12px/1.4 var(--f-mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-muted); background: none; border: 0; padding: 2px 0; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 7px;
+}
+.filter[aria-pressed="true"] { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+.mark { width: 7px; height: 7px; background: var(--mc, var(--ink)); flex: none; }
+.key { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 11px; color: var(--ink-muted); letter-spacing: .04em; }
+
+.group { display: grid; gap: 0; }
+.group > header { display: flex; align-items: baseline; gap: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--ink); }
+.group h2 { margin: 0; font: 400 12px/1.4 var(--f-mono); letter-spacing: .12em; text-transform: uppercase; }
+.group header p { margin: 0 0 0 auto; font-size: 11px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: .08em; }
+.rows { list-style: none; margin: 0; padding: 0; }
+.row {
+  display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) 7.5rem; gap: 6px 32px;
+  padding: 14px 0; border-bottom: 1px solid var(--rule);
+}
+.row h3 { margin: 0; font: 700 13px/1.45 var(--f-mono); }
+.row h3 a { text-decoration: none; }
+.row h3 a:hover { color: var(--link); }
+.row .host { display: block; margin-top: 2px; font-size: 11px; color: var(--ink-muted); overflow-wrap: anywhere; }
+.row .desc { margin: 0; max-width: 64ch; }
+.row .note { margin: 4px 0 0; color: var(--ink-muted); max-width: 64ch; }
+.meta { display: grid; align-content: start; gap: 2px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; font-variant-numeric: tabular-nums; }
+.meta .count, .meta .compat { color: var(--ink-muted); text-transform: none; letter-spacing: 0; }
+.st::before { content: "● "; }
+.s-live { color: var(--ok); }
+.s-beta, .s-archive { color: var(--warn); }
+.s-dead { color: var(--bad); }
+.s-unchecked { color: var(--ink-muted); }
+.s-unchecked::before { content: "○ "; }
+@media (max-width: 760px) {
+  .row { grid-template-columns: minmax(0, 1fr); }
+  .meta { grid-auto-flow: column; justify-content: start; gap: 16px; }
+  .group header p { display: none; }
+}
+
+.notes { background: var(--panel); padding: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px 32px; }
+.notes h2 { grid-column: 1 / -1; margin: 0; font: 400 12px/1.4 var(--f-mono); letter-spacing: .12em; text-transform: uppercase; }
+.notes h3 { margin: 0 0 4px; font: 700 13px/1.4 var(--f-mono); }
+.notes p { margin: 0; color: var(--ink-muted); }
+code { font: inherit; color: var(--ink); }
+
+.empty { padding: 32px 0; color: var(--ink-muted); border-bottom: 1px solid var(--rule); }
+footer { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 12px 32px; }
+footer p { margin: 0; max-width: 60ch; font-size: 11px; color: var(--ink-muted); }
+footer .stamp { font-size: 12px; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="intro">
+    <h1 class="crumb">Nord Modular / G1 + Micro / Patch Atlas</h1>
+    <div style="display:grid;gap:12px">
+      <p>A working catalogue of where to find Nord Modular G1 patches, plus the editors, format docs and reading around them.</p>
+      <p class="muted">Every patch here also loads on the Micro Modular. The Micro has one DSP slot instead of four, so big patches may not fit.</p>
+    </div>
+  </header>
+
+  <div class="controls">
+    <label for="q" class="muted" style="font-size:11px;letter-spacing:.08em;text-transform:uppercase">Search</label>
+    <input id="q" class="search" type="search" placeholder="factory, vocoder, spec…" autocomplete="off">
+    <div class="filters" id="filters" role="group" aria-label="Filter by category"></div>
+    <div class="key" aria-label="Status key">
+      <span class="st s-live">Live — opened and browsed</span>
+      <span class="st s-beta">Beta — early software</span>
+      <span class="st s-archive">Archive only — via archive.org</span>
+      <span class="st s-dead">Dead — link broken</span>
+      <span class="st s-unchecked">Listed — not yet opened</span>
+    </div>
+  </div>
+
+  <main id="catalogue" style="display:grid;gap:48px"></main>
+
+  <section class="notes" aria-labelledby="notes-h">
+    <h2 id="notes-h">Micro Modular notes</h2>
+    <div><h3>Same patch format</h3><p>The Micro reads the same <code>.pch</code> “Nord Modular patch 3.0” files as the full G1. Any archive here applies.</p></div>
+    <div><h3>One DSP slot</h3><p>The full G1 has four slots and the Micro has one. Rack-sized patches can go over 100% load and refuse to run.</p></div>
+    <div><h3>Three knobs</h3><p>Knob assignments beyond three are lost. Re-map the important parameters to knobs 1–3, or to MIDI CC.</p></div>
+    <div><h3>Zip before sending</h3><p>Forum veterans warn that <code>.pch</code> files get mangled in mail and upload forms. Zip them first.</p></div>
+  </section>
+
+  <footer>
+    <p>Compiled from web research. Counts come from the sources or their directory listings. G2 (.pch2) material is out of scope except where it helps tell the formats apart.</p>
+    <span class="stamp">Checked 23/10/2026</span>
+  </footer>
+</div>
+
+<script>
+const CATS = [
+  { id: "archives", name: "Patch archives", blurb: "Community collections" },
+  { id: "factory", name: "Factory presets", blurb: "Clavia banks by OS version" },
+  { id: "editors", name: "Editors & tools", blurb: "Software that talks to the synth" },
+  { id: "format", name: "Format & manuals", blurb: "How .pch files work" },
+  { id: "reading", name: "Learning & reading", blurb: "Workshops, threads, reviews" },
+  { id: "commercial", name: "Commercial", blurb: "Paid packs" },
+];
+
+const NMC = "https://electro-music.org/nm_classic/";
+const R = [
+  { cat: "archives", title: "Nord Modular Classic Archive", url: NMC, status: "live",
+    desc: "The old Clavia NM mailing-list archive, rehosted by electro-music. This is the hub, and most entries below are its subfolders.", count: "hub" },
+  { cat: "archives", title: "Categories Archive", url: NMC + "011_2_CategoriesArchive/", status: "live",
+    desc: "About 7,400 patches split into five zips (7400PatchesPart1–5), sorted into categories such as Bass, Effects, Bells, Brass, Strings, Vox and World.", count: "~7,400 patches" },
+  { cat: "archives", title: "Tony Smith's sorted 3.03 archive", url: NMC + "011_3_CategoriesArchive_Smith_Tony/", status: "live",
+    desc: "The archive re-sorted into folders (“SORTED CLAVIA 3.03”), with a PDF and DOC index of the folder layout." },
+  { cat: "archives", title: "Mailing List Patches", url: NMC + "011_1_patches/", status: "live",
+    desc: "Patches posted to the original mailing list, in one folder per author." },
+  { cat: "archives", title: "Sound Subscribers (1998–99)", url: NMC + "011_4_Sound_Subscribers/", status: "live",
+    desc: "A monthly patch series, one folder per issue, starting July 1998." },
+  { cat: "archives", title: "Nord Lead emulation by Clavia", url: NMC + "011_6_Nord_Lead_Emulation_by_Clavia/", status: "live",
+    desc: "Clavia's patches recreating the Nord Lead on the Modular: Lead2Card banks, LeadRandom and a SetUp01.pch." },
+  { cat: "archives", title: "Nord Lead emulation by Ken Martinez", url: NMC + "011_7_NordLead_Emulation_by_Martinez_Ken/", status: "unchecked",
+    desc: "A community take on the same idea." },
+  { cat: "archives", title: "Random Patches", url: NMC + "011_8_Random_Patches/", status: "live",
+    desc: "Output from patch randomizers by Ico Doornekamp and Steve Harris." },
+  { cat: "archives", title: "FM for Xmas", url: NMC + "011_5_FM_for_Xmas/", status: "unchecked",
+    desc: "A seasonal FM patch collection on the archive." },
+  { cat: "archives", title: "sm-ll / nord-modular-g1-patches", url: "https://github.com/sm-ll/nord-modular-g1-patches", status: "live",
+    desc: "720 G1 patches (Snd NN.pch) from the mono-log.org daily patch blog, on GitHub so you can clone them.", note: "No license stated.", count: "720 patches" },
+  { cat: "archives", title: "electro-music NM Classic forum", url: "https://electro-music.org/forum/forum-94.html", status: "live",
+    desc: "The active G1/NM1 board. Patches are posted as thread attachments." },
+  { cat: "archives", title: "nm-archives.electro-music.com", url: "http://nm-archives.electro-music.com", status: "dead",
+    desc: "The old archive address that many 2000s forum posts link to.", note: "It now redirects to the electro-music front page. Use the Classic Archive above instead." },
+
+  { cat: "factory", title: "Micro Modular factory presets", url: NMC + "011_9_Factory_Presets/Micro/", status: "live",
+    desc: "The Micro's own factory set with its Bank.pchList: vocoders (Robot, Ghost, Chord, Noise, Phase, Pulse, Saw), 5–8 voice polys, SC Prophet 5, MrBassman, MicroWelcome and more.", count: "29 patches", compat: "Micro" },
+  { cat: "factory", title: "Factory presets v3.03", url: NMC + "011_9_Factory_Presets/Factory_Presets_Version_3.03/", status: "live",
+    desc: "The last OS release's factory set, including Gritarr, Fett!!, Shift-O-Mania, AmbiensOrgWAP and RampantLFO02. It also has a Micro30patchlist.htm.", count: "21 patches" },
+  { cat: "factory", title: "Factory presets v1.10, v2.00, v2.10", url: NMC + "011_9_Factory_Presets/", status: "unchecked",
+    desc: "Earlier factory banks, in one folder per OS version. Probably the source of names like Goliath, Starfield and Patternoia." },
+  { cat: "factory", title: "Factory Stereo Compress", url: NMC + "011_9_Factory_Presets/Factory_Stereo_Compress/", status: "unchecked",
+    desc: "A separate factory folder next to the versioned sets." },
+
+  { cat: "editors", title: "Animatek NME", url: "https://rekkerd.org/free-animatek-nme-open-source-editor-for-clavia-nord-modular-g1/", status: "live",
+    desc: "A native JUCE/C++ rewrite of the Nomad editor for Windows, macOS and Linux. It has bank save and send, a Patch Mutator, and an optional MCP bridge for AI assistants.", note: "Reported as MIT-licensed; check the repo's license file to confirm.", compat: "G1 + Micro" },
+  { cat: "editors", title: "Nord Modular G1 Editor (browser)", url: "https://nordmodulareditor.com/", status: "beta",
+    desc: "Peter van der Noord's free web editor, released April 2026. It uses Web MIDI (Chrome recommended) and has a built-in MIDI monitor. Patch sharing is planned.", note: "The author says many features don't work yet." },
+  { cat: "editors", title: "nmEdit / Nomad", url: "https://nmedit.sourceforge.net/documentation.html", status: "live",
+    desc: "The original open-source Java editor (formerly jMod), with the jnmProtocol MIDI library. Started after Clavia ended NM software work, around 2005–06." },
+
+  { cat: "format", title: "libnmPatch (nmEdit)", url: "https://nmedit.sourceforge.net/subprojects/libnmpatch.html", status: "live",
+    desc: "A library that reads and writes native .pch files. Its docs say the v3.03 format is fully known." },
+  { cat: "format", title: "Jan Punter's patch 3.03 spec", url: "https://web.archive.org/web/2008/http://www.iaf.nl/Users/BlueHell/nm/patch303.htm", status: "archive",
+    desc: "The reference description of the .pch text format, section by section.", note: "The original iaf.nl page is gone, and only archive.org snapshots remain." },
+  { cat: "format", title: "nmEdit implementation notes", url: "https://nmedit.sourceforge.net/subprojects/jpatch/implementations.html", status: "live",
+    desc: "Lists the format documents and parsers the nmEdit project built on." },
+  { cat: "format", title: "Nord Modular English User Manual v3.0", url: "https://cdn.hackaday.io/files/1953518357897184/Nord%20Modular%20English%20User%20Manual%20v3.0%20Edition%203.0.pdf", status: "unchecked",
+    desc: "Clavia's official manual (PDF). It covers modules, the editor and performance use, but not the file format." },
+  { cat: "format", title: "G2 patch format (for contrast)", url: "https://wiki.linuxaudio.org/apps/all/nord_modular_g2_patch_format", status: "live",
+    desc: "The G2's binary .pch2 format, which is a different format from the G1. Useful for telling search results apart." },
+
+  { cat: "reading", title: "Interesting Threads from the mailing list", url: NMC + "014_threads/", status: "live",
+    desc: "Curated technical discussions from the original NM mailing list." },
+  { cat: "reading", title: "Clavia workshops", url: NMC + "015_workshops/Clavia/NordModularWorkshops&ThreadsWerkMap/WorkShops", status: "unchecked",
+    desc: "Clavia's patching workshops, mirrored on the archive." },
+  { cat: "reading", title: "Koorenhuis course", url: NMC + "016_Koorenhuis_Cursus", status: "unchecked",
+    desc: "Course material from the Koorenhuis school, hosted on the archive." },
+  { cat: "reading", title: "NM Classic FAQ", url: NMC + "017_FAQ", status: "unchecked",
+    desc: "The archive's FAQ." },
+  { cat: "reading", title: "FM algorithms (Nord Modular book)", url: "https://www.cim.mcgill.ca/~clark/nordmodularbook/fmalgorithms.htm", status: "unchecked",
+    desc: "A chapter from Jim Clark's online Nord Modular book on building FM algorithms." },
+  { cat: "reading", title: "Sound On Sound: NM v3.03 & MicroModular", url: "https://www.soundonsound.com/reviews/clavia-nord-modular-v303-micromodular", status: "live",
+    desc: "A period review. It confirms the Micro plays exactly the same patches, with one DSP slot and three knobs." },
+  { cat: "reading", title: "Synthtopia: free online G1 editor", url: "https://www.synthtopia.com/content/2026/04/05/free-online-nord-modular-g1-patch-editor", status: "live",
+    desc: "News coverage of the 2026 browser editor launch." },
+  { cat: "reading", title: "Nord Modular (Wikipedia)", url: "https://en.wikipedia.org/wiki/Nord_Modular", status: "unchecked",
+    desc: "Background and model history: NM, Rack, Micro, Keyboard and G2." },
+
+  { cat: "commercial", title: "Faxi pack by Ocean Swift Synthesis", url: "https://www.kvraudio.com/product/faxi-nord-modular-pack-abc-by-ocean-swift-synthesis", status: "live",
+    desc: "A paid G1/G2 patch pack listed on KVR.", note: "The vendor warns that a Micro may struggle with the heavier patches." },
+];
+
+const STATUS = { live: "Live", beta: "Beta", archive: "Archive only", dead: "Dead", unchecked: "Listed" };
+const $ = s => document.querySelector(s);
+let active = "all";
+try { active = localStorage.getItem("atlas-cat") || "all"; } catch (e) {}
+
+function host(u) { try { const x = new URL(u); return x.host + x.pathname.replace(/\/$/, ""); } catch (e) { return u; } }
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+function filters() {
+  const all = [{ id: "all", name: "All" }, ...CATS];
+  $("#filters").innerHTML = all.map(c => {
+    const n = c.id === "all" ? R.length : R.filter(r => r.cat === c.id).length;
+    const mark = c.id === "all" ? "" : `<span class="mark" aria-hidden="true" style="--mc: var(--m-${c.id})"></span>`;
+    return `<button class="filter" data-cat="${c.id}" aria-pressed="${active === c.id}">${mark}${esc(c.name)} ${n}</button>`;
+  }).join("");
+}
+
+function render() {
+  const q = $("#q").value.trim().toLowerCase();
+  const html = CATS.filter(c => active === "all" || active === c.id).map(c => {
+    const rows = R.filter(r => r.cat === c.id).filter(r =>
+      !q || [r.title, r.desc, r.note, r.url, r.count, r.compat, STATUS[r.status]].join(" ").toLowerCase().includes(q));
+    if (!rows.length) return "";
+    return `<section class="group" aria-labelledby="h-${c.id}">
+      <header><span class="mark" aria-hidden="true" style="--mc: var(--m-${c.id})"></span><h2 id="h-${c.id}">${esc(c.name)}</h2><p>${esc(c.blurb)}</p></header>
+      <ul class="rows">${rows.map(r => `<li class="row">
+        <div><h3><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a></h3><span class="host">${esc(host(r.url))}</span></div>
+        <div><p class="desc">${esc(r.desc)}</p>${r.note ? `<p class="note">${esc(r.note)}</p>` : ""}</div>
+        <div class="meta"><span class="st s-${r.status}">${STATUS[r.status]}</span>${r.count ? `<span class="count">${esc(r.count)}</span>` : ""}${r.compat ? `<span class="compat">${esc(r.compat)}</span>` : ""}</div>
+      </li>`).join("")}</ul>
+    </section>`;
+  }).join("");
+  $("#catalogue").innerHTML = html || `<div class="empty">Nothing matches “${esc(q)}”. Clear the search or pick another category.</div>`;
+}
+
+$("#filters").addEventListener("click", e => {
+  const b = e.target.closest(".filter"); if (!b) return;
+  active = b.dataset.cat;
+  try { localStorage.setItem("atlas-cat", active); } catch (e) {}
+  document.querySelectorAll(".filter").forEach(f => f.setAttribute("aria-pressed", f.dataset.cat === active));
+  render();
+});
+$("#q").addEventListener("input", render);
+filters(); render();
+</script>
+</body>
+</html>
